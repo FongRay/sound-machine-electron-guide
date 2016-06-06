@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "main": "./main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package": "electron-packager . --app-version=0.1.0 --overwrite --out=./release --platform=win32 --arch=ia32 --icon=./app/img/app-icon.ico"
   },
   "devDependencies": {
+    "electron-packager": "^7.0.3",
     "electron-prebuilt": "^0.30.3"
   },
   "dependencies": {

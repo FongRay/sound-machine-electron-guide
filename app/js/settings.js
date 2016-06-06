@@ -1,38 +1,33 @@
 'use strict';
-
-var ipc = require('ipc');
+const {ipcRenderer} = require('electron');
 
 var closeEl = document.querySelector('.close');
-closeEl.addEventListener('click', function (e) {
-    ipc.send('close-settings-window');
+closeEl.addEventListener('click', () => {
+  ipcRenderer.send('close-settings-window'); 
 });
 
-var configuration = require('../configuration');
-
+const configuration = require('../configuration');
 var modifierCheckboxes = document.querySelectorAll('.global-shortcut');
+for (var i = 0; i < modifierCheckboxes.length; ++i) {
+  var shortcutKeys = configuration.readSettings('shortcutKeys');
+  var modifierKey = modifierCheckboxes[i].attributes['data-modifier-key'].value;
+  modifierCheckboxes[i].checked = shortcutKeys.indexOf(modifierKey) !== -1;
 
-for (var i = 0; i < modifierCheckboxes.length; i++) {
-    var shortcutKeys = configuration.readSettings('shortcutKeys');
-    var modifierKey = modifierCheckboxes[i].attributes['data-modifier-key'].value;
-    modifierCheckboxes[i].checked = shortcutKeys.indexOf(modifierKey) !== -1;
-
-    modifierCheckboxes[i].addEventListener('click', function (e) {
-        bindModifierCheckboxes(e);
-    });
+  modifierCheckboxes[i].addEventListener('click', (event) => {
+    bindModifierCheckboxes(event);
+  });
 }
 
-function bindModifierCheckboxes(e) {
-    var shortcutKeys = configuration.readSettings('shortcutKeys');
-    var modifierKey = e.target.attributes['data-modifier-key'].value;
+function bindModifierCheckboxes(event) {
+  var shortcutKeys = configuration.readSettings('shortcutKeys');
+  var modifierKey = event.target.attributes['data-modifier-key'].value;
+  if (shortcutKeys.indexOf(modifierKey) !== -1) {
+    var shortcutKeyIndex = shortcutKeys.indexOf(modifierKey);
+    shortcutKeys.splice(shortcutKeyIndex, 1);
+  } else {
+    shortcutKeys.push(modifierKey);
+  }
 
-    if (shortcutKeys.indexOf(modifierKey) !== -1) {
-        var shortcutKeyIndex = shortcutKeys.indexOf(modifierKey);
-        shortcutKeys.splice(shortcutKeyIndex, 1);
-    }
-    else {
-        shortcutKeys.push(modifierKey);
-    }
-
-    configuration.saveSettings('shortcutKeys', shortcutKeys);
-    ipc.send('set-global-shortcuts');
+  configuration.saveSettings('shortcutKeys', shortcutKeys);
+  ipcRenderer.send('set-global-shortcuts');
 }
