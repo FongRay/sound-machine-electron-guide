@@ -2,7 +2,7 @@
 
 const electron = require('electron');
 const app = electron.app;
-const BrowserWindow = electron.BrowserMain;
+const BrowserWindow = electron.BrowserWindow;
 
 let mainWindow;
 
@@ -14,8 +14,8 @@ function createWindow() {
     resizable: false
 	});
 
-	mainWindow.loadUrl('file://' + __dirname + '/app/index.html');
-});
+	mainWindow.loadURL('file://' + __dirname + '/app/index.html');
+}
 
 app.on('ready', createWindow);
 
