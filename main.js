@@ -1,8 +1,10 @@
 'use strict';
 
-const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const {app, BrowserWindow} = require('electron');
+
+require('electron-debug')({
+  showDevTools: false
+});
 
 let mainWindow;
 
