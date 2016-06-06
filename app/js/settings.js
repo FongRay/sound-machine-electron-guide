@@ -1,1 +1,1 @@
-// Add your settings.js code in this file
+// Add your settings.js code in this 'use strict';const {ipcRenderer} = require('electron');var closeEl = document.querySelector('.close');closeEl.addEventListener('click', () => {  ipcRenderer.send('close-settings-window'); });

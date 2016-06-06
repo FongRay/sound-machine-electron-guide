@@ -1,32 +1,57 @@
 'use strict';
 
-var app = require('app');
-var BrowserWindow = require('browser-window');
+const {
+	app,
+	BrowserWindow,
+	globalShortcut
+} = require('electron');
 
-var mainWindow = null;
-
-var globalShortcut = require('global-shortcut');
+let mainWindow;
 
 app.on('ready', function() {
-    mainWindow = new BrowserWindow({
-        frame: false,
-        height: 700,
-        resizable: false,
-        width: 368
-    });
+	mainWindow = new BrowserWindow({
+		frame: false,
+		height: 700,
+		resizable: false,
+		width: 368
+	});
 
-    mainWindow.loadUrl('file://' + __dirname + '/app/index.html');
+	mainWindow.loadURL('file://' + __dirname + '/app/index.html');
 
-    globalShortcut.register('ctrl+shift+1', function () {
-        mainWindow.webContents.send('global-shortcut', 0);
-    });
-    globalShortcut.register('ctrl+shift+2', function () {
-        mainWindow.webContents.send('global-shortcut', 1);
-    });
+	globalShortcut.register('ctrl+shift+1', function() {
+		mainWindow.webContents.send('global-shortcut', 0);
+	});
+	globalShortcut.register('ctrl+shift+2', function() {
+		mainWindow.webContents.send('global-shortcut', 1);
+	});
 });
 
-var ipc = require('ipc');
+const {ipcMain} = require('electron');
 
-ipc.on('close-main-window', function () {
-    app.quit();
+ipcMain.on('close-main-window', (event, msg) => {
+	app.quit();
+});
+
+var settingWindow = null;
+ipcMain.on('open-setting-window', () => {
+  if (settingWindow) {
+    return;
+  }
+
+  settingWindow = new BrowserWindow({
+    frame: false,
+    height: 200,
+    resizable: false,
+    width: 200
+  });
+  settingWindow.loadURL('file://' + __dirname + '/app/settings.html');
+  settingWindow.on('closed', () => {
+    settingWindow = null;
+  });
+});
+
+ipcMain.on('close-settings-window', () => {
+  if (settingWindow) {
+    settingWindow.close();
+  }
 });
