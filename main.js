@@ -1,9 +1,9 @@
 'use strict';
 
-var app = require('app');
-var BrowserWindow = require('browser-window');
+const {app, BrowserWindow} = require('electron')
+const {globalShortcut} = require('electron')
 
-var mainWindow = null;
+let mainWindow
 
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
@@ -13,11 +13,19 @@ app.on('ready', function() {
         width: 368
     });
 
-    mainWindow.loadUrl('file://' + __dirname + '/app/index.html');
+    mainWindow.loadURL('file://' + __dirname + '/app/index.html');
+
+    globalShortcut.register('ctrl+shift+1', () => {
+      mainWindow.webContents.send('global-shortcut', 0); 
+    });
+    
+    globalShortcut.register('ctrl+shift+2', () => {
+      mainWindow.webContents.send('global-shortcut', 1); 
+    });
 });
 
-var ipc = require('ipc');
+const {ipcMain} = require('electron');
 
-ipc.on('close-main-window', function () {
+ipcMain.on('close-main-window', function () {
     app.quit();
 });
